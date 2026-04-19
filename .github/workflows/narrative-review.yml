@@ -1,0 +1,28 @@
+name: Narrative Review
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+permissions:
+  checks: write
+  contents: write
+  pages: write
+  pull-requests: write
+
+jobs:
+  review:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: jorgealegre/narrative-review@claude/auto-bootstrap-pages
+        id: narrative
+        with:
+          anthropic-api-key: ${{ secrets.ANTHROPIC_API_KEY }}
+
+      - name: Upload review artifact
+        if: success() && steps.narrative.outputs.skipped != 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          name: narrative-review-${{ github.event.pull_request.number }}
+          path: _narrative-review-output/index.html
+          retention-days: 7
+          overwrite: true
