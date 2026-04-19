@@ -22,3 +22,4 @@ function renderOldCheckout() {
 }
 
 checkout();
+// retrigger
